@@ -44,6 +44,6 @@ class ColorFragment : Fragment() {
 
     private fun loadColors() {
         // TODO: request for loading colors
-        colors = ListWrapper(listOf())
+        colors = ListWrapper(listOf(0xfff00000.toInt(), 0xfff00010.toInt(), 0xfff00100.toInt(), 0xfff20000.toInt()))
     }
 }

@@ -11,5 +11,6 @@
         android:layout_height="100dp"
         android:orientation="vertical"
         android:layout_gravity="center"
+        android:background="@drawable/rounded_cornors"
         android:layout_margin="10dp" />
 </LinearLayout>

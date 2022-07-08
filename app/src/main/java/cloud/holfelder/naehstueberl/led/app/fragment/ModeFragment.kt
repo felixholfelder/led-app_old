@@ -38,7 +38,7 @@ class ModeFragment : Fragment() {
     }
 
     private fun loadColorModes() {
-        modes = ListWrapper(listOf())
+        modes = ListWrapper(listOf(Mode(1, "HELLO")))
     }
 
     private fun setAdapter() {
