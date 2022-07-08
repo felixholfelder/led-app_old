@@ -48,7 +48,6 @@ class ModeFragment : Fragment(), Callback<ListWrapper<Mode>> {
     }
 
     private fun setColorMode() {
-        // TODO: setting the mode is not working
         grdMode.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             val BASE = "http://${Store.currentModuleAddress}/api/"
             val gson: Gson = GsonBuilder().setLenient().create()

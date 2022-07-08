@@ -54,8 +54,8 @@ class ColorFragment : Fragment() {
             } else {
                 setColor(position)
                 Store.isModeActive = false
-                Store.currentColorId = colors.content[position].id
             }
+            Store.currentColorId = colors.content[position].id
         }
     }
 
