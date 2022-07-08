@@ -4,16 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
     <item
-        android:id="@+id/itemColorMode"
+        android:id="@+id/itemModule"
         android:orderInCategory="200"
-        android:title="Farbmodi"
-        android:icon="@drawable/ic_baseline_color_lens_24"
+        android:title="Modul"
+        android:icon="@drawable/ic_baseline_input_24"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/itemColorRefresh"
-        android:orderInCategory="300"
-        android:title="Laden"
-        android:icon="@drawable/ic_baseline_refresh_24"
-        app:showAsAction="ifRoom" />
-
 </menu>

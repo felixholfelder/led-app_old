@@ -5,15 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.LinearLayout
+import android.widget.TextView
 import cloud.holfelder.naehstueberl.led.app.R
+import cloud.holfelder.naehstueberl.led.app.model.Mode
 import cloud.holfelder.naehstueberl.led.app.wrapper.ListWrapper
 
-class ColorGridViewAdapter(val colors: ListWrapper<Int>, val context: Context) : BaseAdapter() {
+class ModeGridViewAdapter(val modes: ListWrapper<Mode>, val context: Context) : BaseAdapter() {
     private lateinit var layoutInflater: LayoutInflater
-    private lateinit var colorCard: LinearLayout
+    private lateinit var colorModeText: TextView
 
-    override fun getCount() = colors.content.size
+    override fun getCount() = modes.content.size
     override fun getItem(position: Int) = null
     override fun getItemId(position: Int): Long = 0
 
@@ -21,10 +22,10 @@ class ColorGridViewAdapter(val colors: ListWrapper<Int>, val context: Context) :
         var view = convertView
         layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         if (view == null) {
-            view = layoutInflater.inflate(R.layout.color_grid_item, null)
+            view = layoutInflater.inflate(R.layout.mode_grid_item, null)
         }
-        colorCard = view!!.findViewById(R.id.colorCard)
-        colorCard.setBackgroundColor(colors.content[position])
+        colorModeText = view!!.findViewById(R.id.modeText)
+        colorModeText.text = modes.content[position].modelName
         return view
     }
 }
