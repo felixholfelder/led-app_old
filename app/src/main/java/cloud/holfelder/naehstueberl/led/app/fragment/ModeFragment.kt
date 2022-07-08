@@ -11,10 +11,13 @@ import androidx.fragment.app.Fragment
 import cloud.holfelder.naehstueberl.led.app.R
 import cloud.holfelder.naehstueberl.led.app.adapter.ModeGridViewAdapter
 import cloud.holfelder.naehstueberl.led.app.model.Color
+import cloud.holfelder.naehstueberl.led.app.model.EspModel
 import cloud.holfelder.naehstueberl.led.app.model.Mode
 import cloud.holfelder.naehstueberl.led.app.rest.ColorApi
+import cloud.holfelder.naehstueberl.led.app.rest.EspApi
 import cloud.holfelder.naehstueberl.led.app.rest.ModeApi
-import cloud.holfelder.naehstueberl.led.app.rest.RequerstController
+import cloud.holfelder.naehstueberl.led.app.rest.RequestController
+import cloud.holfelder.naehstueberl.led.app.store.Store
 import cloud.holfelder.naehstueberl.led.app.wrapper.ListWrapper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -45,8 +48,25 @@ class ModeFragment : Fragment(), Callback<ListWrapper<Mode>> {
     }
 
     private fun setColorMode() {
-        grdMode.onItemClickListener = OnItemClickListener { _, _, pos, _ ->
-            // TODO: set colormode globally
+        // TODO: setting the mode is not working
+        grdMode.onItemClickListener = OnItemClickListener { _, _, position, _ ->
+            val BASE = "http://${Store.currentModuleAddress}/api/"
+            val gson: Gson = GsonBuilder().setLenient().create()
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(BASE)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(RequestController.getClient())
+                .build()
+            val espApi: EspApi = retrofit.create(EspApi::class.java)
+            val call: Call<Any> = espApi.setMode(
+                EspModel(modes.content[position].modeId,null, null, null)
+            )
+            call.enqueue(object : Callback<Any> {
+                override fun onResponse(call: Call<Any>, response: Response<Any>) {}
+                override fun onFailure(call: Call<Any>, t: Throwable) {}
+            })
+            Store.currentModeId = modes.content[position].modeId
+            Store.isModeActive = true
         }
     }
 
@@ -56,7 +76,7 @@ class ModeFragment : Fragment(), Callback<ListWrapper<Mode>> {
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequerstController.getClient())
+            .client(RequestController.getClient())
             .build()
         val modeApi: ModeApi = retrofit.create(ModeApi::class.java)
         val call: Call<ListWrapper<Mode>> = modeApi.loadModes()

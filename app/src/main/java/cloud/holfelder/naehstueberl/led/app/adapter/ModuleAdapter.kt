@@ -1,6 +1,7 @@
 package cloud.holfelder.naehstueberl.led.app.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,10 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import cloud.holfelder.naehstueberl.led.app.R
+import cloud.holfelder.naehstueberl.led.app.activity.HomeActivity
 import cloud.holfelder.naehstueberl.led.app.dialog.ModuleDialog
 import cloud.holfelder.naehstueberl.led.app.model.Module
+import cloud.holfelder.naehstueberl.led.app.store.Store
 import cloud.holfelder.naehstueberl.led.app.wrapper.ListWrapper
 
 class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context, val supportFragmentManager: FragmentManager) : BaseAdapter() {
@@ -31,10 +34,20 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context, val 
         }
         textModule = view!!.findViewById(R.id.textModule)
         textModule.text = getItem(position).name
+        setModule(position)
 
         btnSettings = view.findViewById(R.id.btnSettings)
         openSettings(position)
         return view
+    }
+
+    private fun setModule(position: Int) {
+        textModule.setOnClickListener {
+            Store.currentModuleAddress = getItem(position).address
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            context.startActivity(intent)
+        }
     }
 
     private fun openSettings(position: Int) {

@@ -8,7 +8,7 @@
         android:id="@+id/textModule"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:textSize="22dp"
+        android:textSize="20sp"
         android:layout_margin="10dp"
         android:layout_weight=".85"/>
 

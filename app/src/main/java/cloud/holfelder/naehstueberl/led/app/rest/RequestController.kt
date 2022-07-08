@@ -4,7 +4,7 @@ import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-class RequerstController {
+class RequestController {
     companion object {
         private val USERNAME = ""
         private val PASSWORD = ""

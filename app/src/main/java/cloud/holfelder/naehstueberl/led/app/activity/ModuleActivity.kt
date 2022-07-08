@@ -14,7 +14,7 @@ import cloud.holfelder.naehstueberl.led.app.model.Color
 import cloud.holfelder.naehstueberl.led.app.model.Module
 import cloud.holfelder.naehstueberl.led.app.rest.ColorApi
 import cloud.holfelder.naehstueberl.led.app.rest.ModuleApi
-import cloud.holfelder.naehstueberl.led.app.rest.RequerstController
+import cloud.holfelder.naehstueberl.led.app.rest.RequestController
 import cloud.holfelder.naehstueberl.led.app.wrapper.ListWrapper
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -38,13 +38,6 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
 
         loadModules()
         setModuleAdapter()
-        setModule()
-    }
-
-    private fun setModule() {
-        listModule.onItemClickListener = OnItemClickListener { _, _, pos, _ ->
-            // TODO: set current module globally
-        }
     }
 
     override
@@ -78,7 +71,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequerstController.getClient())
+            .client(RequestController.getClient())
             .build()
         val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
         val call: Call<ListWrapper<Module>> = moduleApi.loadModules()
@@ -93,7 +86,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequerstController.getClient())
+            .client(RequestController.getClient())
             .build()
         val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
         val call: Call<ListWrapper<Module>> = moduleApi.createModule(module)
@@ -111,7 +104,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequerstController.getClient())
+            .client(RequestController.getClient())
             .build()
         val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
         val call: Call<ListWrapper<Module>> = moduleApi.updateModule(module.id!!, module)
