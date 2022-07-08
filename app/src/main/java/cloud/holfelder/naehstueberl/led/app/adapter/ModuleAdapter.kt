@@ -1,6 +1,5 @@
 package cloud.holfelder.naehstueberl.led.app.adapter
 
-import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -14,13 +13,13 @@ import cloud.holfelder.naehstueberl.led.app.dialog.ModuleDialog
 import cloud.holfelder.naehstueberl.led.app.model.Module
 import cloud.holfelder.naehstueberl.led.app.wrapper.ListWrapper
 
-class ModuleAdapter(val colorModes: ListWrapper<Module>, val context: Context, val supportFragmentManager: FragmentManager) : BaseAdapter() {
+class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context, val supportFragmentManager: FragmentManager) : BaseAdapter() {
     private lateinit var layoutInflater: LayoutInflater
     private lateinit var textModule: TextView
     private lateinit var btnSettings: ImageButton
 
-    override fun getCount() = colorModes.content.size
-    override fun getItem(position: Int) = colorModes.content[position]
+    override fun getCount() = modules.content.size
+    override fun getItem(position: Int) = modules.content[position]
     override fun getItemId(position: Int): Long = 0
 
     override
@@ -43,5 +42,10 @@ class ModuleAdapter(val colorModes: ListWrapper<Module>, val context: Context, v
             val moduleDialog = ModuleDialog(getItem(position), position)
             moduleDialog.show(supportFragmentManager, "moduleDialog")
         }
+    }
+
+    fun refresh(modules: ListWrapper<Module>) {
+        this.modules = modules
+        notifyDataSetChanged()
     }
 }

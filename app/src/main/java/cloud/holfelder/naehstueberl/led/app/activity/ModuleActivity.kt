@@ -5,16 +5,31 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import cloud.holfelder.naehstueberl.led.app.R
 import cloud.holfelder.naehstueberl.led.app.adapter.ModuleAdapter
 import cloud.holfelder.naehstueberl.led.app.dialog.ModuleDialog
+import cloud.holfelder.naehstueberl.led.app.model.Color
 import cloud.holfelder.naehstueberl.led.app.model.Module
+import cloud.holfelder.naehstueberl.led.app.rest.ColorApi
+import cloud.holfelder.naehstueberl.led.app.rest.ModuleApi
+import cloud.holfelder.naehstueberl.led.app.rest.RequerstController
 import cloud.holfelder.naehstueberl.led.app.wrapper.ListWrapper
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener {
+class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
+    Callback<ListWrapper<Module>> {
     private lateinit var listModule: ListView
-    private lateinit var modules: ListWrapper<Module>
+    private var modules: ListWrapper<Module> = ListWrapper(listOf())
+    private lateinit var moduleAdapter: ModuleAdapter
+
     override
     fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,20 +67,37 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener {
         moduleDialog.show(supportFragmentManager, "moduleDialog")
     }
 
-    private fun loadModules() {
-        // TODO: reqeust for loading modules
-        modules = ListWrapper(listOf(Module(1, "test", "192.168.2.112", "FF:FF:FF:FF:FF:FF")))
+    private fun setModuleAdapter() {
+        moduleAdapter = ModuleAdapter(modules, this, supportFragmentManager)
+        listModule.adapter = moduleAdapter
     }
 
-    private fun setModuleAdapter() {
-        val moduleAdapter = ModuleAdapter(modules, this, supportFragmentManager)
-        listModule.adapter = moduleAdapter
+    private fun loadModules() {
+        val BASE = "https://led-rest.holfelder.cloud/api/"
+        val gson: Gson = GsonBuilder().setLenient().create()
+        val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl(BASE)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(RequerstController.getClient())
+            .build()
+        val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
+        val call: Call<ListWrapper<Module>> = moduleApi.loadModules()
+        call.enqueue(this)
     }
 
     override
     fun createModule(name: String, address: String, mac: String) {
-        // TODO: request for creating module
         val module = Module(null, name, address, mac)
+        val BASE = "https://led-rest.holfelder.cloud/api/"
+        val gson: Gson = GsonBuilder().setLenient().create()
+        val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl(BASE)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(RequerstController.getClient())
+            .build()
+        val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
+        val call: Call<ListWrapper<Module>> = moduleApi.createModule(module)
+        call.enqueue(this)
     }
 
     override
@@ -74,6 +106,28 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener {
         module.name = name
         module.address = address
         module.mac = mac
-        // TODO: request for updating module
+        val BASE = "https://led-rest.holfelder.cloud/api/"
+        val gson: Gson = GsonBuilder().setLenient().create()
+        val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl(BASE)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(RequerstController.getClient())
+            .build()
+        val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
+        val call: Call<ListWrapper<Module>> = moduleApi.updateModule(module.id!!, module)
+        call.enqueue(this)
+    }
+
+    override
+    fun onResponse(call: Call<ListWrapper<Module>>, response: Response<ListWrapper<Module>>) {
+        if (response.isSuccessful) {
+            modules = response.body()!!
+            moduleAdapter.refresh(modules)
+        }
+    }
+
+    override
+    fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
+        Toast.makeText(this, "Ladung der Module fehlgeschlagen!", Toast.LENGTH_LONG).show()
     }
 }

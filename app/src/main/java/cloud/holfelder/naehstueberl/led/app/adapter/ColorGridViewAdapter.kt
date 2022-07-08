@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.LinearLayout
+import androidx.core.content.res.TypedArrayUtils
 import cloud.holfelder.naehstueberl.led.app.R
+import cloud.holfelder.naehstueberl.led.app.model.Color
 import cloud.holfelder.naehstueberl.led.app.wrapper.ListWrapper
 
-class ColorGridViewAdapter(val colors: ListWrapper<Int>, val context: Context) : BaseAdapter() {
+class ColorGridViewAdapter(var colors: ListWrapper<Color>, val context: Context) : BaseAdapter() {
     private lateinit var layoutInflater: LayoutInflater
-    private lateinit var colorCard: Button
+    private lateinit var colorCard: LinearLayout
 
     override fun getCount() = colors.content.size
     override fun getItem(position: Int) = null
@@ -25,7 +27,12 @@ class ColorGridViewAdapter(val colors: ListWrapper<Int>, val context: Context) :
             view = layoutInflater.inflate(R.layout.color_grid_item, null)
         }
         colorCard = view!!.findViewById(R.id.colorCard)
-        colorCard.setBackgroundColor(colors.content[position])
+        colorCard.setBackgroundColor(android.graphics.Color.parseColor(colors.content[position].hex))
         return view
+    }
+
+    fun refresh(colors: ListWrapper<Color>) {
+        this.colors = colors
+        notifyDataSetChanged()
     }
 }
