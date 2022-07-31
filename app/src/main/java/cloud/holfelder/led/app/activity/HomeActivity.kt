@@ -21,7 +21,7 @@ class HomeActivity : AppCompatActivity() {
         tabLayout = findViewById(R.id.tabview)
         viewPager = findViewById(R.id.pager)
 
-        setTabs()
+        createTabs()
         setAdapter()
     }
 
@@ -39,9 +39,9 @@ class HomeActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun setTabs() {
-        tabLayout.addTab(tabLayout.newTab().setText("Farben"))
-        tabLayout.addTab(tabLayout.newTab().setText("Modus"))
+    private fun createTabs() {
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.home_colors)))
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.home_modus)))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
     }
 

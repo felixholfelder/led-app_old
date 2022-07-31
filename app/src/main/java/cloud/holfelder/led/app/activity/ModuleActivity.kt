@@ -26,6 +26,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     private lateinit var listModule: ListView
     private var modules: ListWrapper<Module> = ListWrapper(listOf())
     private lateinit var moduleAdapter: ModuleAdapter
+    private val BASE = "https://led-rest.holfelder.cloud/api/"
 
     override
     fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +64,6 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     }
 
     private fun loadModules() {
-        val BASE = "https://led-rest.holfelder.cloud/api/"
         val gson: Gson = GsonBuilder().setLenient().create()
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
@@ -78,7 +78,6 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     override
     fun createModule(name: String, address: String, mac: String) {
         val module = Module(null, name, address, mac)
-        val BASE = "https://led-rest.holfelder.cloud/api/"
         val gson: Gson = GsonBuilder().setLenient().create()
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
@@ -96,7 +95,6 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         module.name = name
         module.address = address
         module.mac = mac
-        val BASE = "https://led-rest.holfelder.cloud/api/"
         val gson: Gson = GsonBuilder().setLenient().create()
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
@@ -118,6 +116,6 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
 
     override
     fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
-        Toast.makeText(this, "Ladung der Module fehlgeschlagen!", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, getString(R.string.module_load_modules_failed), Toast.LENGTH_LONG).show()
     }
 }

@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">Led-App</string>
+    <string name="app_name">Led</string>
+    <string name="module_load_modules_failed">Ladung der Module fehlgeschlagen!</string>
+    <string name="module_load_colors_failed">Ladung der Farben fehlgeschlagen!</string>
+    <string name="module_load_modes_failed">Ladung der Modi fehlgeschlagen!</string>
+    <string name="home_colors">Farben</string>
+    <string name="home_modus">Modus</string>
+    <string name="dialog_module">Modul</string>
+    <string name="dialog_cancel">Abbrechen</string>
+    <string name="dialog_save">Speichern</string>
 </resources>

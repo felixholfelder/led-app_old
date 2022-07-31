@@ -16,7 +16,8 @@ import cloud.holfelder.led.app.model.Module
 import cloud.holfelder.led.app.store.Store
 import cloud.holfelder.led.app.wrapper.ListWrapper
 
-class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context, val supportFragmentManager: FragmentManager) : BaseAdapter() {
+class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
+                    val supportFragmentManager: FragmentManager) : BaseAdapter() {
     private lateinit var layoutInflater: LayoutInflater
     private lateinit var textModule: TextView
     private lateinit var btnSettings: ImageButton

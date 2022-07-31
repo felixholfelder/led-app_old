@@ -15,7 +15,7 @@ class ColorGridViewAdapter(var colors: ListWrapper<Color>, val context: Context)
     private lateinit var colorCard: LinearLayout
 
     override fun getCount() = colors.content.size
-    override fun getItem(position: Int) = null
+    override fun getItem(position: Int) = colors.content[position]
     override fun getItemId(position: Int): Long = 0
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {

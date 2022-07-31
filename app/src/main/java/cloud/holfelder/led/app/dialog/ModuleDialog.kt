@@ -34,9 +34,9 @@ class ModuleDialog(private val item: Module?, private val pos: Int?) : AppCompat
         }
 
         builder.setView(view)
-            .setTitle("Modul")
-            .setNegativeButton("Abbrechen") { _, _ -> }
-            .setPositiveButton("Speichern") { _, _ ->
+            .setTitle(getString(R.string.dialog_module))
+            .setNegativeButton(getString(R.string.dialog_cancel)) { _, _ -> }
+            .setPositiveButton(getString(R.string.dialog_save)) { _, _ ->
                 val name = itemModuleName.text.toString()
                 val address = itemModuleAddress.text.toString()
                 val mac = itemModuleMac.text.toString()

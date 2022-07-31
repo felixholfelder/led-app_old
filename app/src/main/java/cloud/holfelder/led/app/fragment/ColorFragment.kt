@@ -29,6 +29,10 @@ class ColorFragment : Fragment() {
     private lateinit var grdColor: GridView
     private var colors: ListWrapper<Color> = ListWrapper(listOf())
     private lateinit var colorGridViewAdapter: ColorGridViewAdapter
+    private val RED = 0
+    private val GREEN = 1
+    private val BLUE = 2
+    private val BASE = "https://led-rest.holfelder.cloud/api/"
 
     override
     fun onCreateView(
@@ -71,9 +75,9 @@ class ColorFragment : Fragment() {
         val call: Call<Any> = espApi.setColor(
             EspModel(
                 null,
-                getRGB(colors.content[position].hex)[0],
-                getRGB(colors.content[position].hex)[1],
-                getRGB(colors.content[position].hex)[2]
+                getRGB(colors.content[position].hex)[RED],
+                getRGB(colors.content[position].hex)[GREEN],
+                getRGB(colors.content[position].hex)[BLUE]
             )
         )
         call.enqueue(object : Callback<Any> {
@@ -94,9 +98,9 @@ class ColorFragment : Fragment() {
         val call: Call<Any> = espApi.setMode(
             EspModel(
                 Store.currentModeId,
-                getRGB(colors.content[position].hex)[0],
-                getRGB(colors.content[position].hex)[1],
-                getRGB(colors.content[position].hex)[2]
+                getRGB(colors.content[position].hex)[RED],
+                getRGB(colors.content[position].hex)[GREEN],
+                getRGB(colors.content[position].hex)[BLUE]
             )
         )
         call.enqueue(object : Callback<Any> {
@@ -118,7 +122,6 @@ class ColorFragment : Fragment() {
     }
 
     private fun loadColors() {
-        val BASE = "https://led-rest.holfelder.cloud/api/"
         val gson: Gson = GsonBuilder().setLenient().create()
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
@@ -140,10 +143,9 @@ class ColorFragment : Fragment() {
             }
 
             override
-            fun onFailure(call: Call<ListWrapper<Color>>, t: Throwable) {
-                Toast.makeText(context, "Ladung der Farben fehlgeschlagen!", Toast.LENGTH_LONG)
-                    .show()
-            }
+            fun onFailure(call: Call<ListWrapper<Color>>, t: Throwable) =
+                Toast.makeText(context, getString(R.string.module_load_colors_failed),
+                    Toast.LENGTH_LONG).show()
         })
     }
 }

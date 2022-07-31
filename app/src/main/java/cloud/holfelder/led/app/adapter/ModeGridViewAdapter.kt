@@ -15,7 +15,7 @@ class ModeGridViewAdapter(var modes: ListWrapper<Mode>, val context: Context) : 
     private lateinit var colorModeText: TextView
 
     override fun getCount() = modes.content.size
-    override fun getItem(position: Int) = null
+    override fun getItem(position: Int) = modes.content[position]
     override fun getItemId(position: Int): Long = 0
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {

@@ -29,11 +29,11 @@ class ModeFragment : Fragment(), Callback<ListWrapper<Mode>> {
     private lateinit var grdMode: GridView
     private var modes: ListWrapper<Mode> = ListWrapper(listOf())
     private lateinit var modeGridViewAdapter: ModeGridViewAdapter
+    private val BASE = "https://led-rest.holfelder.cloud/api/"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.mode_fragment, container, false)
     }
 
@@ -68,7 +68,6 @@ class ModeFragment : Fragment(), Callback<ListWrapper<Mode>> {
     }
 
     private fun loadColorModes() {
-        val BASE = "https://led-rest.holfelder.cloud/api/"
         val gson: Gson = GsonBuilder().setLenient().create()
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE)
@@ -94,7 +93,7 @@ class ModeFragment : Fragment(), Callback<ListWrapper<Mode>> {
     }
 
     override
-    fun onFailure(call: Call<ListWrapper<Mode>>, t: Throwable) {
-        Toast.makeText(context, "Ladung der Modi fehlgeschlagen!", Toast.LENGTH_LONG).show()
-    }
+    fun onFailure(call: Call<ListWrapper<Mode>>, t: Throwable) =
+        Toast.makeText(context, getString(R.string.module_load_modes_failed), Toast.LENGTH_LONG)
+            .show()
 }
