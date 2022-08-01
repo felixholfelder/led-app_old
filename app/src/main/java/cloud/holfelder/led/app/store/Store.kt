@@ -1,9 +1,7 @@
 package cloud.holfelder.led.app.store
 
 import android.app.Application
-import cloud.holfelder.led.app.SocketListener
 import okhttp3.WebSocket
-import java.net.Socket
 
 class Store : Application() {
     companion object {

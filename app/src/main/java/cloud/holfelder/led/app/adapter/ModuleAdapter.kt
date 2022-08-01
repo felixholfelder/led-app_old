@@ -10,7 +10,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import cloud.holfelder.led.app.R
-import cloud.holfelder.led.app.SocketListener
+import cloud.holfelder.led.app.listener.SocketListener
 import cloud.holfelder.led.app.activity.HomeActivity
 import cloud.holfelder.led.app.dialog.ModuleDialog
 import cloud.holfelder.led.app.model.Module
@@ -26,6 +26,7 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
     private lateinit var textModule: TextView
     private lateinit var btnSettings: ImageButton
     private lateinit var client: OkHttpClient
+    private var socket: WebSocket? = null
 
     override fun getCount() = modules.content.size
     override fun getItem(position: Int) = modules.content[position]
@@ -60,9 +61,12 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
     private fun start(address: String) {
         val request = Request.Builder().url("ws://$address:81").build()
         val listener = SocketListener()
-        val socket = client.newWebSocket(request, listener)
+        if (socket != null) {
+            socket!!.close(444, "Connection closed!")
+        }
+        socket = client.newWebSocket(request, listener)
         client.dispatcher().executorService().shutdown()
-        Store.socket = socket
+        Store.socket = socket as WebSocket
     }
 
     private fun openSettings(position: Int) {
