@@ -64,49 +64,25 @@ class ColorFragment : Fragment() {
     }
 
     private fun setColor(position: Int) {
-        val BASE = "http://${Store.currentModuleAddress}/api/"
-        val gson: Gson = GsonBuilder().setLenient().create()
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequestController.getClient())
-            .build()
-        val espApi: EspApi = retrofit.create(EspApi::class.java)
-        val call: Call<Any> = espApi.setColor(
+        Store.socket.send(
             EspModel(
                 null,
                 getRGB(colors.content[position].hex)[RED],
                 getRGB(colors.content[position].hex)[GREEN],
                 getRGB(colors.content[position].hex)[BLUE]
-            )
+            ).toJson()
         )
-        call.enqueue(object : Callback<Any> {
-            override fun onResponse(call: Call<Any>, response: Response<Any>) {}
-            override fun onFailure(call: Call<Any>, t: Throwable) {}
-        })
     }
 
     private fun setMode(position: Int) {
-        val BASE = "http://${Store.currentModuleAddress}/api/"
-        val gson: Gson = GsonBuilder().setLenient().create()
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequestController.getClient())
-            .build()
-        val espApi: EspApi = retrofit.create(EspApi::class.java)
-        val call: Call<Any> = espApi.setMode(
+        Store.socket.send(
             EspModel(
                 Store.currentModeId,
                 getRGB(colors.content[position].hex)[RED],
                 getRGB(colors.content[position].hex)[GREEN],
                 getRGB(colors.content[position].hex)[BLUE]
-            )
+            ).toJson()
         )
-        call.enqueue(object : Callback<Any> {
-            override fun onResponse(call: Call<Any>, response: Response<Any>) {}
-            override fun onFailure(call: Call<Any>, t: Throwable) {}
-        })
     }
 
     private fun setAdapter() {
@@ -144,8 +120,10 @@ class ColorFragment : Fragment() {
 
             override
             fun onFailure(call: Call<ListWrapper<Color>>, t: Throwable) =
-                Toast.makeText(context, getString(R.string.module_load_colors_failed),
-                    Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context, getString(R.string.module_load_colors_failed),
+                    Toast.LENGTH_LONG
+                ).show()
         })
     }
 }

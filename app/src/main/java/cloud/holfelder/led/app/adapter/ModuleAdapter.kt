@@ -10,17 +10,22 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import cloud.holfelder.led.app.R
+import cloud.holfelder.led.app.SocketListener
 import cloud.holfelder.led.app.activity.HomeActivity
 import cloud.holfelder.led.app.dialog.ModuleDialog
 import cloud.holfelder.led.app.model.Module
 import cloud.holfelder.led.app.store.Store
 import cloud.holfelder.led.app.wrapper.ListWrapper
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocket
 
 class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
                     val supportFragmentManager: FragmentManager) : BaseAdapter() {
     private lateinit var layoutInflater: LayoutInflater
     private lateinit var textModule: TextView
     private lateinit var btnSettings: ImageButton
+    private lateinit var client: OkHttpClient
 
     override fun getCount() = modules.content.size
     override fun getItem(position: Int) = modules.content[position]
@@ -28,6 +33,7 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
 
     override
     fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        client = OkHttpClient()
         var view = convertView
         layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         if (view == null) {
@@ -44,11 +50,19 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
 
     private fun setModule(position: Int) {
         textModule.setOnClickListener {
+            start(getItem(position).address)
             Store.currentModuleAddress = getItem(position).address
             val intent = Intent(context, HomeActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             context.startActivity(intent)
         }
+    }
+    private fun start(address: String) {
+        val request = Request.Builder().url("ws://$address:81").build()
+        val listener = SocketListener()
+        val socket = client.newWebSocket(request, listener)
+        client.dispatcher().executorService().shutdown()
+        Store.socket = socket
     }
 
     private fun openSettings(position: Int) {

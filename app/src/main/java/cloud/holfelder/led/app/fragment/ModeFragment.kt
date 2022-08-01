@@ -47,22 +47,9 @@ class ModeFragment : Fragment(), Callback<ListWrapper<Mode>> {
 
     private fun setColorMode() {
         grdMode.onItemClickListener = OnItemClickListener { _, _, position, _ ->
-            val BASE = "http://${Store.currentModuleAddress}/api/"
-            val gson: Gson = GsonBuilder().setLenient().create()
-            val retrofit: Retrofit = Retrofit.Builder()
-                .baseUrl(BASE)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(RequestController.getClient())
-                .build()
-            val espApi: EspApi = retrofit.create(EspApi::class.java)
-            val call: Call<Any> = espApi.setMode(
-                EspModel(modes.content[position].modeId,null, null, null)
-            )
-            call.enqueue(object : Callback<Any> {
-                override fun onResponse(call: Call<Any>, response: Response<Any>) {}
-                override fun onFailure(call: Call<Any>, t: Throwable) {}
-            })
             Store.currentModeId = modes.content[position].modeId
+            Store.socket.send(
+                EspModel(Store.currentModeId, null, null, null).toJson())
             Store.isModeActive = true
         }
     }
