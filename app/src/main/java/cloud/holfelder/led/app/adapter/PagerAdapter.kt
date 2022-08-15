@@ -4,10 +4,11 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import cloud.holfelder.led.app.fragment.ColorFragment
-import cloud.holfelder.led.app.fragment.ModeFragment
+import cloud.holfelder.led.app.tabs.ColorFragment
+import cloud.holfelder.led.app.tabs.ModeFragment
 
-class PagerAdapter(var context: Context, fm: FragmentManager, var tabs: Int) : FragmentStatePagerAdapter(fm) {
+class PagerAdapter(var context: Context, fm: FragmentManager, var tabs: Int) :
+    FragmentStatePagerAdapter(fm) {
     private val COLOR_TAB = 0
     private val MODE_TAB = 1
 

@@ -7,5 +7,9 @@
     <string name="home_modus">Modus</string>
     <string name="dialog_module">Modul</string>
     <string name="dialog_cancel">Abbrechen</string>
+    <string name="dialog_delete">Löschen</string>
     <string name="dialog_save">Speichern</string>
+    <string name="dialog_close">Schließen</string>
+    <string name="socket_connection_closed">Connection closed!</string>
+    <string name="socket_no_connection">Keine Verbindung zu ESP-Modul!</string>
 </resources>

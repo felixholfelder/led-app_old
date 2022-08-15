@@ -4,32 +4,28 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ListView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import cloud.holfelder.led.app.R
 import cloud.holfelder.led.app.adapter.ModuleAdapter
+import cloud.holfelder.led.app.dialog.ErrorDialog
 import cloud.holfelder.led.app.dialog.ModuleDialog
 import cloud.holfelder.led.app.model.Module
 import cloud.holfelder.led.app.rest.ModuleApi
-import cloud.holfelder.led.app.rest.RequestController
+import cloud.holfelder.led.app.utils.RequestUtils
 import cloud.holfelder.led.app.wrapper.ListWrapper
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import java.io.EOFException
 
 class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     Callback<ListWrapper<Module>> {
     private lateinit var listModule: ListView
     private var modules: ListWrapper<Module> = ListWrapper(listOf())
     private lateinit var moduleAdapter: ModuleAdapter
-    private val BASE = "https://led-rest.holfelder.cloud/api/"
+    private val retrofit = RequestUtils.retrofit
 
-    override
-    fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_module)
         listModule = findViewById(R.id.listModule)
@@ -38,15 +34,13 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         setModuleAdapter()
     }
 
-    override
-    fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.module_items, menu)
         return true
     }
 
-    override
-    fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.itemAddModule -> openModuleDialog()
             R.id.itemModuleRefresh -> loadModules()
         }
@@ -64,46 +58,40 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     }
 
     private fun loadModules() {
-        val gson: Gson = GsonBuilder().setLenient().create()
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequestController.getClient())
-            .build()
         val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
         val call: Call<ListWrapper<Module>> = moduleApi.loadModules()
         call.enqueue(this)
     }
 
-    override
-    fun createModule(name: String, address: String, mac: String) {
+    override fun createModule(name: String, address: String, mac: String) {
         val module = Module(null, name, address, mac)
-        val gson: Gson = GsonBuilder().setLenient().create()
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequestController.getClient())
-            .build()
         val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
         val call: Call<ListWrapper<Module>> = moduleApi.createModule(module)
         call.enqueue(this)
     }
 
-    override
-    fun updateModule(name: String, address: String, mac: String, pos: Int) {
+    override fun updateModule(name: String, address: String, mac: String, pos: Int) {
         val module = modules.content[pos]
         module.name = name
         module.address = address
         module.mac = mac
-        val gson: Gson = GsonBuilder().setLenient().create()
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequestController.getClient())
-            .build()
         val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
         val call: Call<ListWrapper<Module>> = moduleApi.updateModule(module.id!!, module)
         call.enqueue(this)
+    }
+
+    override fun deleteModule(id: Int) {
+        val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
+        val call: Call<Any> = moduleApi.deleteModule(id)
+        call.enqueue(object : Callback<Any> {
+            override fun onResponse(call: Call<Any>, response: Response<Any>) {}
+            override fun onFailure(call: Call<Any>, t: Throwable) {
+                if (t !is EOFException) {
+                    val e = Exception(t)
+                    showErrorDialog(e, true)
+                }
+            }
+        })
     }
 
     override
@@ -114,8 +102,13 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         }
     }
 
-    override
-    fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
-        Toast.makeText(this, getString(R.string.module_load_modules_failed), Toast.LENGTH_LONG).show()
+    override fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
+        val e = Exception(t)
+        showErrorDialog(e, true)
+    }
+
+    private fun showErrorDialog(e: Exception, showTrace: Boolean) {
+        val errorDialog = ErrorDialog(e, showTrace)
+        errorDialog.show(supportFragmentManager, "errorDialog")
     }
 }

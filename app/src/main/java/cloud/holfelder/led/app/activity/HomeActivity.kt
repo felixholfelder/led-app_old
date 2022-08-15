@@ -6,8 +6,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
-import cloud.holfelder.led.app.adapter.PagerAdapter
 import cloud.holfelder.led.app.R
+import cloud.holfelder.led.app.adapter.PagerAdapter
 import com.google.android.material.tabs.TabLayout
 
 class HomeActivity : AppCompatActivity() {
@@ -33,7 +33,7 @@ class HomeActivity : AppCompatActivity() {
 
     override
     fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.itemModule -> openModules()
         }
         return super.onOptionsItemSelected(item)
@@ -57,6 +57,7 @@ class HomeActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })

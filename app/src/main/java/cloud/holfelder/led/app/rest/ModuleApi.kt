@@ -14,4 +14,7 @@ interface ModuleApi {
 
     @PUT("modules/{id}")
     fun updateModule(@Path("id") id: Int, @Body module: Module): Call<ListWrapper<Module>>
+
+    @DELETE("modules/{id}")
+    fun deleteModule(@Path("id") id: Int): Call<Any>
 }

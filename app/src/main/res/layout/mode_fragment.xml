@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/backgroundColor"
-    tools:context=".fragment.ModeFragment">
+    tools:context=".tabs.ModeFragment">
     <GridView
         android:id="@+id/grdMode"
         android:layout_width="match_parent"
