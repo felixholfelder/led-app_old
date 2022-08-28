@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import cloud.holfelder.led.app.R
 import cloud.holfelder.led.app.adapter.ModeGridViewAdapter
 import cloud.holfelder.led.app.dialog.ErrorDialog
-import cloud.holfelder.led.app.model.EspModel
+import cloud.holfelder.led.app.model.EspColorModel
 import cloud.holfelder.led.app.model.Mode
 import cloud.holfelder.led.app.rest.ModeApi
 import cloud.holfelder.led.app.store.Store
@@ -49,7 +49,7 @@ class ModeFragment : Fragment(), Callback<ListWrapper<Mode>> {
                 }
                 Store.currentModeId = modes.content[position].modeId
                 Store.socket?.sendText(
-                    EspModel(Store.currentModeId, null, null, null).toJson()
+                    EspColorModel(Store.currentModeId, null, null, null).toJson()
                 )
                 Store.isModeActive = true
             } catch (e: Exception) {

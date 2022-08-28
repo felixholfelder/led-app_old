@@ -14,8 +14,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
 
-    override
-    fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         tabLayout = findViewById(R.id.tabview)
@@ -25,14 +24,12 @@ class HomeActivity : AppCompatActivity() {
         setAdapter()
     }
 
-    override
-    fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.color_activity_items, menu)
         return true
     }
 
-    override
-    fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.itemModule -> openModules()
         }

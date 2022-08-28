@@ -11,7 +11,7 @@ import cloud.holfelder.led.app.R
 import cloud.holfelder.led.app.adapter.ColorGridViewAdapter
 import cloud.holfelder.led.app.dialog.ErrorDialog
 import cloud.holfelder.led.app.model.Color
-import cloud.holfelder.led.app.model.EspModel
+import cloud.holfelder.led.app.model.EspColorModel
 import cloud.holfelder.led.app.rest.ColorApi
 import cloud.holfelder.led.app.store.Store
 import cloud.holfelder.led.app.utils.RequestUtils
@@ -64,7 +64,7 @@ class ColorFragment : Fragment(), Callback<ListWrapper<Color>> {
                 throw IllegalStateException(getString(R.string.socket_no_connection))
             }
             Store.socket?.sendText(
-                EspModel(
+                EspColorModel(
                     null,
                     getRGB(colors.content[position].hex)[RED],
                     getRGB(colors.content[position].hex)[GREEN],
@@ -83,7 +83,7 @@ class ColorFragment : Fragment(), Callback<ListWrapper<Color>> {
                 throw IllegalStateException(getString(R.string.socket_no_connection))
             }
             Store.socket?.sendText(
-                EspModel(
+                EspColorModel(
                     Store.currentModeId,
                     getRGB(colors.content[position].hex)[RED],
                     getRGB(colors.content[position].hex)[GREEN],

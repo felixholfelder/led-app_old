@@ -74,6 +74,6 @@ class ModuleDialog(private val item: Module?, private val pos: Int?) : AppCompat
     interface ModuleItemListener {
         fun createModule(name: String, address: String, mac: String)
         fun updateModule(name: String, address: String, mac: String, pos: Int)
-        fun deleteModule(id: Int)
+        fun deleteModule(id: String)
     }
 }

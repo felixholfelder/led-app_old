@@ -34,7 +34,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         setModuleAdapter()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.module_items, menu)
         return true
     }
@@ -80,7 +80,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         call.enqueue(this)
     }
 
-    override fun deleteModule(id: Int) {
+    override fun deleteModule(id: String) {
         val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
         val call: Call<Any> = moduleApi.deleteModule(id)
         call.enqueue(object : Callback<Any> {
@@ -99,6 +99,8 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         if (response.isSuccessful) {
             modules = response.body()!!
             moduleAdapter.refresh(modules)
+        } else {
+            showErrorDialog(Exception("Fehler: ${response.code()}"), false)
         }
     }
 
