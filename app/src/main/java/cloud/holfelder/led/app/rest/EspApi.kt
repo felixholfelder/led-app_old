@@ -6,9 +6,9 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface EspApi {
-    @POST("mode")
-    fun setMode(@Body espColorModel: EspColorModel): Call<Any>
+  @POST("mode")
+  fun setMode(@Body espColorModel: EspColorModel): Call<Any>
 
-    @POST("color")
-    fun setColor(@Body espColorModel: EspColorModel): Call<Any>
+  @POST("color")
+  fun setColor(@Body espColorModel: EspColorModel): Call<Any>
 }

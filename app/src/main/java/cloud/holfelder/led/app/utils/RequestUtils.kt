@@ -7,13 +7,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RequestUtils {
-    companion object {
-        private val BASE = "https://led-rest.holfelder.cloud/api/"
-        private val gson: Gson = GsonBuilder().setLenient().create()
-        val retrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(BASE)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(RequestController.getClient())
-            .build()
-    }
+  companion object {
+    private const val BASE = "https://led-rest.holfelder.cloud/api/"
+    private val gson: Gson = GsonBuilder().setLenient().create()
+    val retrofit: Retrofit = Retrofit.Builder()
+      .baseUrl(BASE)
+      .addConverterFactory(GsonConverterFactory.create(gson))
+      .client(RequestController.getClient())
+      .build()
+  }
 }

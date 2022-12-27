@@ -6,6 +6,6 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 interface ModeApi {
-    @GET("modes")
-    fun loadModes(): Call<ListWrapper<Mode>>
+  @GET("modes")
+  fun loadModes(): Call<ListWrapper<Mode>>
 }

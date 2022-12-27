@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="100dp"
     android:layout_height="100dp"
     android:layout_gravity="center"
     android:layout_margin="10dp">
+
     <LinearLayout
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -13,6 +13,7 @@
         android:backgroundTint="@color/gray"
         android:background="@drawable/rounded_cornors"
         android:layout_margin="10dp">
+
         <TextView
             android:id="@+id/modeText"
             android:layout_width="match_parent"

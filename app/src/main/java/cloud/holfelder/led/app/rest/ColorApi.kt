@@ -6,6 +6,6 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 interface ColorApi {
-    @GET("colors")
-    fun loadColors(): Call<ListWrapper<Color>>
+  @GET("colors")
+  fun loadColors(): Call<ListWrapper<Color>>
 }

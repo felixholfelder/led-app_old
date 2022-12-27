@@ -5,6 +5,9 @@
     android:layout_height="fill_parent"
     android:background="?attr/backgroundColor"
     tools:context=".tabs.ColorFragment">
+
+    <include layout="@layout/loading_spinner_layout"/>
+
     <GridView
         android:id="@+id/grdColor"
         android:layout_width="match_parent"

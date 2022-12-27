@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="100dp"
     android:layout_margin="10dp">
+
     <TextView
         android:id="@+id/textModule"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:textSize="20sp"
         android:layout_margin="10dp"
-        android:layout_weight=".70"/>
+        android:layout_weight=".70" />
 
     <ImageButton
         android:id="@+id/btnIsConnected"
@@ -19,7 +19,7 @@
         android:background="@color/transparent"
         android:src="@drawable/ic_lock"
         android:visibility="invisible"
-        android:layout_weight=".15"/>
+        android:layout_weight=".15" />
 
     <ImageButton
         android:id="@+id/btnSettings"
@@ -27,5 +27,5 @@
         android:layout_height="match_parent"
         android:background="@color/transparent"
         android:src="@drawable/ic_baseline_settings_24"
-        android:layout_weight=".15"/>
+        android:layout_weight=".15" />
 </LinearLayout>
