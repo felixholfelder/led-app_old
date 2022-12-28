@@ -12,4 +12,10 @@
     <string name="dialog_close">Schließen</string>
     <string name="socket_connection_closed">Connection closed!</string>
     <string name="socket_no_connection">Keine Verbindung zu ESP-Modul!</string>
+    <string name="layout_module">Modul</string>
+    <string name="layout_add">Hinzufügen</string>
+    <string name="layout_load">Laden</string>
+    <string name="dialog_mac">MAC-Adresse</string>
+    <string name="dialog_address">Adresse</string>
+    <string name="dialog_name">Name</string>
 </resources>

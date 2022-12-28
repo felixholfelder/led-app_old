@@ -6,7 +6,7 @@
     <item
         android:id="@+id/itemModule"
         android:orderInCategory="200"
-        android:title="Modul"
+        android:title="@string/layout_module"
         android:icon="@drawable/ic_cast"
         app:showAsAction="ifRoom" />
 </menu>

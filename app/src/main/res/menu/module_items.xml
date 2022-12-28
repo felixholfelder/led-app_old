@@ -6,14 +6,14 @@
     <item
         android:id="@+id/itemAddModule"
         android:orderInCategory="200"
-        android:title="Hinzufügen"
+        android:title="@string/layout_add"
         android:icon="@drawable/ic_baseline_add_24"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/itemModuleRefresh"
         android:orderInCategory="200"
-        android:title="Laden"
+        android:title="@string/layout_load"
         android:icon="@drawable/ic_baseline_refresh_24"
         app:showAsAction="ifRoom" />
 </menu>
