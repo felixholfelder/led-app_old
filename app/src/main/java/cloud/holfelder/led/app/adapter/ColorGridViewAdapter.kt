@@ -1,6 +1,8 @@
 package cloud.holfelder.led.app.adapter
 
 import android.content.Context
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +27,9 @@ class ColorGridViewAdapter(var colors: ListWrapper<Color>, val context: Context)
       view = layoutInflater.inflate(R.layout.color_grid_item, null)
     }
     colorCard = view!!.findViewById(R.id.colorCard)
-    colorCard.setBackgroundColor(android.graphics.Color.parseColor(colors.content[position].hex))
+    val colorFilter = PorterDuffColorFilter(
+      android.graphics.Color.parseColor(colors.content[position].hex), PorterDuff.Mode.SRC_ATOP)
+    colorCard.background.colorFilter = colorFilter
     return view
   }
 

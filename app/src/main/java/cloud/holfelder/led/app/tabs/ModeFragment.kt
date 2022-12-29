@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.GridView
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import cloud.holfelder.led.app.R
@@ -30,6 +31,7 @@ import retrofit2.Response
 class ModeFragment : Fragment() {
   private lateinit var grdMode: GridView
   private lateinit var loadingSpinner: ProgressBar
+  private lateinit var tvResourcesNotFound: TextView
   private var modes: ListWrapper<Mode> = ListWrapper(listOf())
   private lateinit var modeGridViewAdapter: ModeGridViewAdapter
   private val retrofit = RequestUtils.retrofit
@@ -45,6 +47,7 @@ class ModeFragment : Fragment() {
   fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     grdMode = requireView().findViewById(R.id.grdMode)
     loadingSpinner = requireView().findViewById(R.id.loadingSpinner)
+    tvResourcesNotFound = requireView().findViewById(R.id.tvResourcesNotFound)
     loadColorModes()
     setAdapter()
     setColorMode()
@@ -70,6 +73,7 @@ class ModeFragment : Fragment() {
 
   private fun loadColorModes() {
     loadingSpinner.isVisible = true
+    tvResourcesNotFound.isVisible = false
     CoroutineScope(Main).launch {
       val modeApi: ModeApi = retrofit.create(ModeApi::class.java)
       val call: Call<ListWrapper<Mode>> = modeApi.loadModes()
@@ -79,14 +83,21 @@ class ModeFragment : Fragment() {
           if (response.isSuccessful) {
             modes = response.body()!!
             modeGridViewAdapter.refresh(modes)
-            loadingSpinner.isVisible = false
+          } else {
+            tvResourcesNotFound.isVisible = true
           }
+
+          if (response.body() == null) {
+            tvResourcesNotFound.isVisible = true
+          }
+          loadingSpinner.isVisible = false
         }
 
         override fun onFailure(call: Call<ListWrapper<Mode>>, t: Throwable) {
           val e = java.lang.Exception(t)
           showErrorDialog(e, true)
           loadingSpinner.isVisible = false
+          tvResourcesNotFound.isVisible = false
         }
       })
     }

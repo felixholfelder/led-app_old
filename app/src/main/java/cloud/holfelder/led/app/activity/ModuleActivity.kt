@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ListView
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import cloud.holfelder.led.app.R
@@ -29,6 +30,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
   Callback<ListWrapper<Module>> {
   private lateinit var listModule: ListView
   private lateinit var loadingSpinner: ProgressBar
+  private lateinit var tvResourcesNotFound: TextView
   private var modules: ListWrapper<Module> = ListWrapper(listOf())
   private lateinit var moduleAdapter: ModuleAdapter
   private val retrofit = RequestUtils.retrofit
@@ -38,6 +40,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     setContentView(R.layout.activity_module)
     listModule = findViewById(R.id.listModule)
     loadingSpinner = findViewById(R.id.loadingSpinner)
+    tvResourcesNotFound = findViewById(R.id.tvResourcesNotFound)
 
     loadModules()
     setModuleAdapter()
@@ -68,6 +71,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
 
   private fun loadModules() {
     loadingSpinner.isVisible = true
+    tvResourcesNotFound.isVisible = false
     CoroutineScope(Dispatchers.Main).launch {
       val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
       val call: Call<ListWrapper<Module>> = moduleApi.loadModules()
@@ -95,7 +99,6 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
   override fun deleteModule(id: String) {
     val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
     val call: Call<Any> = moduleApi.deleteModule(id)
-    val request = call.request()
     call.enqueue(object : Callback<Any> {
       override fun onResponse(call: Call<Any>, response: Response<Any>) {
         if (response.isSuccessful) {
@@ -119,7 +122,11 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
       modules = response.body()!!
       moduleAdapter.refresh(modules)
     } else {
-      showErrorDialog(Exception("Fehler: ${response.code()}"), false)
+      tvResourcesNotFound.isVisible = true
+    }
+
+    if (response.body() == null) {
+      tvResourcesNotFound.isVisible = true
     }
     loadingSpinner.isVisible = false
   }
@@ -128,6 +135,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     val e = Exception(t)
     showErrorDialog(e, true)
     loadingSpinner.isVisible = false
+    tvResourcesNotFound.isVisible = true
   }
 
   private fun showErrorDialog(e: Exception, showTrace: Boolean) {

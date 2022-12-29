@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/backgroundColor"
+    android:background="@color/background"
     tools:context=".activity.ModuleActivity">
 
     <include layout="@layout/loading_spinner_layout" />
+    <include layout="@layout/resources_not_found_layout"/>
 
     <ListView
         android:id="@+id/listModule"

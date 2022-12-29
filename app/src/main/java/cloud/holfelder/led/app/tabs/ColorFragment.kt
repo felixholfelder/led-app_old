@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.GridView
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import cloud.holfelder.led.app.R
@@ -31,6 +32,7 @@ import retrofit2.Response
 class ColorFragment : Fragment() {
   private lateinit var grdColor: GridView
   private lateinit var loadingSpinner: ProgressBar
+  private lateinit var tvResourcesNotFound: TextView
   private var colors: ListWrapper<Color> = ListWrapper(listOf())
   private lateinit var colorGridViewAdapter: ColorGridViewAdapter
   private val RED = 0
@@ -50,6 +52,7 @@ class ColorFragment : Fragment() {
   fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     grdColor = requireView().findViewById(R.id.grdColor)
     loadingSpinner = requireView().findViewById(R.id.loadingSpinner)
+    tvResourcesNotFound = requireView().findViewById(R.id.tvResourcesNotFound)
     loadColors()
     handleAction()
     setAdapter()
@@ -120,6 +123,7 @@ class ColorFragment : Fragment() {
 
   private fun loadColors() {
     loadingSpinner.isVisible = true
+    tvResourcesNotFound.isVisible = false
     CoroutineScope(Dispatchers.Main).launch {
       val colorApi: ColorApi = retrofit.create(ColorApi::class.java)
       val call: Call<ListWrapper<Color>> = colorApi.loadColors()
@@ -131,14 +135,21 @@ class ColorFragment : Fragment() {
           if (response.isSuccessful) {
             colors = response.body()!!
             colorGridViewAdapter.refresh(colors)
-            loadingSpinner.isVisible = false
+          } else {
+            tvResourcesNotFound.isVisible = true
           }
+
+          if (response.body() == null) {
+            tvResourcesNotFound.isVisible = true
+          }
+          loadingSpinner.isVisible = false
         }
 
         override fun onFailure(call: Call<ListWrapper<Color>>, t: Throwable) {
           val e = java.lang.Exception(t)
           showErrorDialog(e, true)
           loadingSpinner.isVisible = false
+          tvResourcesNotFound.isVisible = true
         }
       })
     }

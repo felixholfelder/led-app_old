@@ -18,4 +18,5 @@
     <string name="dialog_mac">MAC-Adresse</string>
     <string name="dialog_address">Adresse</string>
     <string name="dialog_name">Name</string>
+    <string name="layout_resources_not_found">Keine Elemente gefunden!</string>
 </resources>
