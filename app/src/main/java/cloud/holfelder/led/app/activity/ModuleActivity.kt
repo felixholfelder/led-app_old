@@ -89,8 +89,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         if (response.isSuccessful) {
           loadModules()
         } else {
-          val e = Exception(response.message())
-          showErrorDialog(e, true)
+          showErrorDialog(Exception("Fehler: ${response.code()}"), false)
         }
       }
 
@@ -113,8 +112,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
         if (response.isSuccessful) {
           loadModules()
         } else {
-          val e = Exception(response.message())
-          showErrorDialog(e, true)
+          showErrorDialog(Exception("Fehler: ${response.code()}"), false)
         }
       }
 

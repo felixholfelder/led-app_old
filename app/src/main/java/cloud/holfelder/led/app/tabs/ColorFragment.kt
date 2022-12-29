@@ -60,14 +60,14 @@ class ColorFragment : Fragment() {
 
   private fun handleAction() {
     grdColor.onItemClickListener = OnItemClickListener { _, _, position, _ ->
-      if (Store.isModeActive && Store.currentColorId != colors.content[position].id) {
+      if (Store.isModeActive && Store.currentColor != colors.content[position].hex) {
         setMode(position)
         Store.isModeActive = true
       } else {
         setColor(position)
         Store.isModeActive = false
       }
-      Store.currentColorId = colors.content[position].id
+      Store.currentColor = colors.content[position].hex
     }
   }
 
