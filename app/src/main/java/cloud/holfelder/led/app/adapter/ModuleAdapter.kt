@@ -11,6 +11,7 @@ import android.widget.BaseAdapter
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import cloud.holfelder.led.app.R
 import cloud.holfelder.led.app.activity.HomeActivity
@@ -52,12 +53,12 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
     btnIsConnected = view.findViewById(R.id.btnIsConnected)
 
     if (Store.currentModule?.id == getItem(position).id) {
-      btnIsConnected.visibility = View.VISIBLE
+      btnIsConnected.isVisible = true
     }
 
     textModule.text = getItem(position).name
-    setModule(position)
 
+    setModule(position)
     openSettings(position)
     handleWebSocketEvents()
     return view

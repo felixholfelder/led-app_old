@@ -8,7 +8,7 @@ import cloud.holfelder.led.app.tabs.ColorFragment
 import cloud.holfelder.led.app.tabs.ModeFragment
 
 class PagerAdapter(var context: Context, fm: FragmentManager, var tabs: Int) :
-  FragmentStatePagerAdapter(fm) {
+  FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
   private val COLOR_TAB = 0
   private val MODE_TAB = 1
 

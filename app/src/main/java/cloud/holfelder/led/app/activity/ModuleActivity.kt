@@ -31,7 +31,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
   private lateinit var listModule: ListView
   private lateinit var loadingSpinner: ProgressBar
   private lateinit var tvResourcesNotFound: TextView
-  private var modules: ListWrapper<Module> = ListWrapper(listOf())
+  private var modules: ListWrapper<Module> = ListWrapper(arrayListOf())
   private lateinit var moduleAdapter: ModuleAdapter
   private val retrofit = RequestUtils.retrofit
 
@@ -70,6 +70,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
   }
 
   private fun loadModules() {
+    listModule.isVisible = false
     loadingSpinner.isVisible = true
     tvResourcesNotFound.isVisible = false
     CoroutineScope(Dispatchers.Main).launch {
@@ -83,7 +84,21 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     val module = Module(null, name, address, mac)
     val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
     val call: Call<ListWrapper<Module>> = moduleApi.createModule(module)
-    call.enqueue(this)
+    call.enqueue(object : Callback<ListWrapper<Module>> {
+      override fun onResponse(call: Call<ListWrapper<Module>>, response: Response<ListWrapper<Module>>) {
+        if (response.isSuccessful) {
+          loadModules()
+        } else {
+          val e = Exception(response.message())
+          showErrorDialog(e, true)
+        }
+      }
+
+      override fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
+        val e = Exception(t)
+        showErrorDialog(e, true)
+      }
+    })
   }
 
   override fun updateModule(name: String, address: String, mac: String, pos: Int) {
@@ -93,7 +108,21 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     module.mac = mac
     val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
     val call: Call<ListWrapper<Module>> = moduleApi.updateModule(module.id!!, module)
-    call.enqueue(this)
+    call.enqueue(object : Callback<ListWrapper<Module>> {
+      override fun onResponse(call: Call<ListWrapper<Module>>, response: Response<ListWrapper<Module>>) {
+        if (response.isSuccessful) {
+          loadModules()
+        } else {
+          val e = Exception(response.message())
+          showErrorDialog(e, true)
+        }
+      }
+
+      override fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
+        val e = Exception(t)
+        showErrorDialog(e, true)
+      }
+    })
   }
 
   override fun deleteModule(id: String) {
@@ -121,6 +150,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     if (response.isSuccessful) {
       modules = response.body()!!
       moduleAdapter.refresh(modules)
+      listModule.isVisible = true
     } else {
       tvResourcesNotFound.isVisible = true
     }
