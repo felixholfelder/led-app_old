@@ -9,12 +9,6 @@ interface ModuleApi {
   @GET("modules")
   fun loadModules(): Call<ListWrapper<Module>>
 
-  @POST("modules")
-  fun createModule(@Body module: Module): Call<ListWrapper<Module>>
-
-  @PUT("modules/{id}")
-  fun updateModule(@Path("id") id: String?, @Body module: Module): Call<ListWrapper<Module>>
-
   @DELETE("modules/{id}")
   fun deleteModule(@Path("id") id: String?): Call<Any>
 }

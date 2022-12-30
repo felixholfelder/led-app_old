@@ -94,7 +94,7 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
 
   private fun openSettings(position: Int) {
     btnSettings.setOnClickListener {
-      val moduleDialog = ModuleDialog(getItem(position), position)
+      val moduleDialog = ModuleDialog(getItem(position))
       moduleDialog.show(fragmentManager, "moduleDialog")
     }
   }

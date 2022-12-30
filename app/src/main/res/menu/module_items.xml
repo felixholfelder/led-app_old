@@ -4,16 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.ModuleActivity">
     <item
-        android:id="@+id/itemAddModule"
-        android:orderInCategory="200"
-        android:title="@string/layout_add"
-        android:icon="@drawable/ic_baseline_add_24"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/itemModuleRefresh"
         android:orderInCategory="200"
         android:title="@string/layout_load"
-        android:icon="@drawable/ic_baseline_refresh_24"
+        android:icon="@drawable/ic_refresh"
         app:showAsAction="ifRoom" />
 </menu>

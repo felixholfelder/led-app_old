@@ -53,15 +53,9 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
-      R.id.itemAddModule -> openModuleDialog()
       R.id.itemModuleRefresh -> loadModules()
     }
     return super.onOptionsItemSelected(item)
-  }
-
-  private fun openModuleDialog() {
-    val moduleDialog = ModuleDialog(null, null)
-    moduleDialog.show(supportFragmentManager, "moduleDialog")
   }
 
   private fun setModuleAdapter() {
@@ -78,49 +72,6 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
       val call: Call<ListWrapper<Module>> = moduleApi.loadModules()
       call.enqueue(this@ModuleActivity)
     }
-  }
-
-  override fun createModule(name: String, address: String, mac: String) {
-    val module = Module(null, name, address, mac)
-    val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
-    val call: Call<ListWrapper<Module>> = moduleApi.createModule(module)
-    call.enqueue(object : Callback<ListWrapper<Module>> {
-      override fun onResponse(call: Call<ListWrapper<Module>>, response: Response<ListWrapper<Module>>) {
-        if (response.isSuccessful) {
-          loadModules()
-        } else {
-          showErrorDialog(Exception("Fehler: ${response.code()}"), false)
-        }
-      }
-
-      override fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
-        val e = Exception(t)
-        showErrorDialog(e, true)
-      }
-    })
-  }
-
-  override fun updateModule(name: String, address: String, mac: String, pos: Int) {
-    val module = modules.content[pos]
-    module.name = name
-    module.address = address
-    module.mac = mac
-    val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
-    val call: Call<ListWrapper<Module>> = moduleApi.updateModule(module.id!!, module)
-    call.enqueue(object : Callback<ListWrapper<Module>> {
-      override fun onResponse(call: Call<ListWrapper<Module>>, response: Response<ListWrapper<Module>>) {
-        if (response.isSuccessful) {
-          loadModules()
-        } else {
-          showErrorDialog(Exception("Fehler: ${response.code()}"), false)
-        }
-      }
-
-      override fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
-        val e = Exception(t)
-        showErrorDialog(e, true)
-      }
-    })
   }
 
   override fun deleteModule(id: String) {
