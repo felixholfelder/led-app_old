@@ -5,9 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".tabs.ModeFragment">
 
-    <include layout="@layout/loading_spinner_layout" />
-    <include layout="@layout/resources_not_found_layout"/>
-
     <GridView
         android:id="@+id/grdMode"
         android:layout_width="match_parent"

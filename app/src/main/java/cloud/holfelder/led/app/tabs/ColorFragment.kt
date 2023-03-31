@@ -6,39 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.GridView
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import cloud.holfelder.led.app.R
 import cloud.holfelder.led.app.adapter.ColorGridViewAdapter
 import cloud.holfelder.led.app.dialog.ErrorDialog
 import cloud.holfelder.led.app.model.Color
 import cloud.holfelder.led.app.model.EspColorModel
-import cloud.holfelder.led.app.model.Mode
-import cloud.holfelder.led.app.rest.ColorApi
-import cloud.holfelder.led.app.rest.ModeApi
 import cloud.holfelder.led.app.store.Store
-import cloud.holfelder.led.app.utils.RequestUtils
 import cloud.holfelder.led.app.wrapper.ListWrapper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import led.rest.enums.ColorEnum
 
 class ColorFragment : Fragment() {
   private lateinit var grdColor: GridView
-  private lateinit var loadingSpinner: ProgressBar
-  private lateinit var tvResourcesNotFound: TextView
   private var colors: ListWrapper<Color> = ListWrapper(listOf())
   private lateinit var colorGridViewAdapter: ColorGridViewAdapter
   private val RED = 0
   private val GREEN = 1
   private val BLUE = 2
-  private val retrofit = RequestUtils.retrofit
 
   override
   fun onCreateView(
@@ -51,8 +35,6 @@ class ColorFragment : Fragment() {
   override
   fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     grdColor = requireView().findViewById(R.id.grdColor)
-    loadingSpinner = requireView().findViewById(R.id.loadingSpinner)
-    tvResourcesNotFound = requireView().findViewById(R.id.tvResourcesNotFound)
     loadColors()
     handleAction()
     setAdapter()
@@ -122,37 +104,12 @@ class ColorFragment : Fragment() {
   }
 
   private fun loadColors() {
-    loadingSpinner.isVisible = true
-    tvResourcesNotFound.isVisible = false
-    CoroutineScope(Dispatchers.Main).launch {
-      val colorApi: ColorApi = retrofit.create(ColorApi::class.java)
-      val call: Call<ListWrapper<Color>> = colorApi.loadColors()
-      call.enqueue(object : Callback<ListWrapper<Color>> {
-        override fun onResponse(
-          call: Call<ListWrapper<Color>>,
-          response: Response<ListWrapper<Color>>
-        ) {
-          if (response.isSuccessful) {
-            colors = response.body()!!
-            colorGridViewAdapter.refresh(colors)
-          } else {
-            tvResourcesNotFound.isVisible = true
-          }
-
-          if (response.body() == null) {
-            tvResourcesNotFound.isVisible = true
-          }
-          loadingSpinner.isVisible = false
-        }
-
-        override fun onFailure(call: Call<ListWrapper<Color>>, t: Throwable) {
-          val e = java.lang.Exception(t)
-          showErrorDialog(e, true)
-          loadingSpinner.isVisible = false
-          tvResourcesNotFound.isVisible = true
-        }
-      })
-    }
+    val colors = ColorEnum.values()
+    val wrapper: ListWrapper<Color> = ListWrapper(listOf())
+    val list: MutableList<Color> = mutableListOf()
+    colors.forEachIndexed { index, color -> list.add(Color(index, color.hex)) }
+    wrapper.content = list
+    this.colors = wrapper
   }
 
   private fun showErrorDialog(e: Exception, showTrace: Boolean) {

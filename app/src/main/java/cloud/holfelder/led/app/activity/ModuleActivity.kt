@@ -1,39 +1,34 @@
 package cloud.holfelder.led.app.activity
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import cloud.holfelder.led.app.R
 import cloud.holfelder.led.app.adapter.ModuleAdapter
-import cloud.holfelder.led.app.dialog.ErrorDialog
-import cloud.holfelder.led.app.dialog.ModuleDialog
-import cloud.holfelder.led.app.model.Color
 import cloud.holfelder.led.app.model.Module
-import cloud.holfelder.led.app.rest.ColorApi
-import cloud.holfelder.led.app.rest.ModuleApi
-import cloud.holfelder.led.app.utils.RequestUtils
 import cloud.holfelder.led.app.wrapper.ListWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.EOFException
 
-class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
-  Callback<ListWrapper<Module>> {
+class ModuleActivity : AppCompatActivity() {
   private lateinit var listModule: ListView
   private lateinit var loadingSpinner: ProgressBar
   private lateinit var tvResourcesNotFound: TextView
   private var modules: ListWrapper<Module> = ListWrapper(arrayListOf())
   private lateinit var moduleAdapter: ModuleAdapter
-  private val retrofit = RequestUtils.retrofit
+  private lateinit var wifiManager: WifiManager
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -41,8 +36,9 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     listModule = findViewById(R.id.listModule)
     loadingSpinner = findViewById(R.id.loadingSpinner)
     tvResourcesNotFound = findViewById(R.id.tvResourcesNotFound)
+    wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
-    loadModules()
+    scanForModules()
     setModuleAdapter()
   }
 
@@ -53,7 +49,7 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
-      R.id.itemModuleRefresh -> loadModules()
+      R.id.itemModuleRefresh -> scanForModules()
     }
     return super.onOptionsItemSelected(item)
   }
@@ -63,62 +59,30 @@ class ModuleActivity : AppCompatActivity(), ModuleDialog.ModuleItemListener,
     listModule.adapter = moduleAdapter
   }
 
-  private fun loadModules() {
+  private fun scanForModules() {
     listModule.isVisible = false
     loadingSpinner.isVisible = true
     tvResourcesNotFound.isVisible = false
     CoroutineScope(Dispatchers.Main).launch {
-      val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
-      val call: Call<ListWrapper<Module>> = moduleApi.loadModules()
-      call.enqueue(this@ModuleActivity)
-    }
-  }
-
-  override fun deleteModule(id: String) {
-    val moduleApi: ModuleApi = retrofit.create(ModuleApi::class.java)
-    val call: Call<Any> = moduleApi.deleteModule(id)
-    call.enqueue(object : Callback<Any> {
-      override fun onResponse(call: Call<Any>, response: Response<Any>) {
-        if (response.isSuccessful) {
-          loadModules()
-        } else {
-          showErrorDialog(Exception("Fehler: ${response.code()}"), false)
-        }
+      registerReceiver(wifiReciever, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
+      if (!wifiManager.isWifiEnabled) {
+        Toast.makeText(this@ModuleActivity, "Keine Internetverbindung!", Toast.LENGTH_LONG).show()
+        wifiManager.isWifiEnabled = true
       }
-      override fun onFailure(call: Call<Any>, t: Throwable) {
-        if (t !is EOFException) {
-          val e = Exception(t)
-          showErrorDialog(e, true)
-        }
+      wifiManager.startScan()
+    }
+  }
+
+  var wifiReciever = object: BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+      unregisterReceiver(this)
+      for (device in wifiManager.scanResults) {
+        println("done 1")
+        val module = Module(null, device.SSID, "123", "123")
+        modules.content = listOf(module)
+        moduleAdapter.refresh(modules)
       }
-    })
-  }
-
-  override
-  fun onResponse(call: Call<ListWrapper<Module>>, response: Response<ListWrapper<Module>>) {
-    if (response.isSuccessful) {
-      modules = response.body()!!
-      moduleAdapter.refresh(modules)
-      listModule.isVisible = true
-    } else {
-      tvResourcesNotFound.isVisible = true
+      println("done 2")
     }
-
-    if (response.body() == null) {
-      tvResourcesNotFound.isVisible = true
-    }
-    loadingSpinner.isVisible = false
-  }
-
-  override fun onFailure(call: Call<ListWrapper<Module>>, t: Throwable) {
-    val e = Exception(t)
-    showErrorDialog(e, true)
-    loadingSpinner.isVisible = false
-    tvResourcesNotFound.isVisible = true
-  }
-
-  private fun showErrorDialog(e: Exception, showTrace: Boolean) {
-    val errorDialog = ErrorDialog(e, showTrace)
-    errorDialog.show(supportFragmentManager, "errorDialog")
   }
 }

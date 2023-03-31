@@ -6,35 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.GridView
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import cloud.holfelder.led.app.R
 import cloud.holfelder.led.app.adapter.ModeGridViewAdapter
 import cloud.holfelder.led.app.dialog.ErrorDialog
 import cloud.holfelder.led.app.model.EspColorModel
 import cloud.holfelder.led.app.model.Mode
-import cloud.holfelder.led.app.rest.ModeApi
 import cloud.holfelder.led.app.store.Store
-import cloud.holfelder.led.app.utils.RequestUtils
 import cloud.holfelder.led.app.wrapper.ListWrapper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import led.rest.enums.ColorModeEnum
 
 class ModeFragment : Fragment() {
   private lateinit var grdMode: GridView
-  private lateinit var loadingSpinner: ProgressBar
-  private lateinit var tvResourcesNotFound: TextView
   private var modes: ListWrapper<Mode> = ListWrapper(listOf())
   private lateinit var modeGridViewAdapter: ModeGridViewAdapter
-  private val retrofit = RequestUtils.retrofit
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -46,8 +31,6 @@ class ModeFragment : Fragment() {
   override
   fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     grdMode = requireView().findViewById(R.id.grdMode)
-    loadingSpinner = requireView().findViewById(R.id.loadingSpinner)
-    tvResourcesNotFound = requireView().findViewById(R.id.tvResourcesNotFound)
     loadColorModes()
     setAdapter()
     setColorMode()
@@ -72,35 +55,12 @@ class ModeFragment : Fragment() {
   }
 
   private fun loadColorModes() {
-    loadingSpinner.isVisible = true
-    tvResourcesNotFound.isVisible = false
-    CoroutineScope(Main).launch {
-      val modeApi: ModeApi = retrofit.create(ModeApi::class.java)
-      val call: Call<ListWrapper<Mode>> = modeApi.loadModes()
-      call.enqueue(object : Callback<ListWrapper<Mode>> {
-        override
-        fun onResponse(call: Call<ListWrapper<Mode>>, response: Response<ListWrapper<Mode>>) {
-          if (response.isSuccessful) {
-            modes = response.body()!!
-            modeGridViewAdapter.refresh(modes)
-          } else {
-            tvResourcesNotFound.isVisible = true
-          }
-
-          if (response.body() == null) {
-            tvResourcesNotFound.isVisible = true
-          }
-          loadingSpinner.isVisible = false
-        }
-
-        override fun onFailure(call: Call<ListWrapper<Mode>>, t: Throwable) {
-          val e = java.lang.Exception(t)
-          showErrorDialog(e, true)
-          loadingSpinner.isVisible = false
-          tvResourcesNotFound.isVisible = false
-        }
-      })
-    }
+    val modes = ColorModeEnum.values()
+    val wrapper: ListWrapper<Mode> = ListWrapper(listOf())
+    val list: MutableList<Mode> = mutableListOf()
+    modes.forEachIndexed { index, mode -> list.add(Mode(index, mode.modeName)) }
+    wrapper.content = list
+    this.modes = wrapper
   }
 
   private fun setAdapter() {
