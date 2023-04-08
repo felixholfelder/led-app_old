@@ -27,14 +27,5 @@
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:layout_margin="10dp" />
-
-        <EditText
-            android:id="@+id/itemModuleMac"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/dialog_mac"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:layout_margin="10dp" />
     </LinearLayout>
 </RelativeLayout>

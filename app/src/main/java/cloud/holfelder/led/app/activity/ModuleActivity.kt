@@ -1,26 +1,21 @@
 package cloud.holfelder.led.app.activity
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import cloud.holfelder.led.app.R
 import cloud.holfelder.led.app.adapter.ModuleAdapter
+import cloud.holfelder.led.app.dialog.ErrorDialog
 import cloud.holfelder.led.app.model.Module
 import cloud.holfelder.led.app.wrapper.ListWrapper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import tej.wifitoolslib.DevicesFinder
+import tej.wifitoolslib.interfaces.OnDeviceFindListener
+import tej.wifitoolslib.models.DeviceItem
 
 class ModuleActivity : AppCompatActivity() {
   private lateinit var listModule: ListView
@@ -28,7 +23,6 @@ class ModuleActivity : AppCompatActivity() {
   private lateinit var tvResourcesNotFound: TextView
   private var modules: ListWrapper<Module> = ListWrapper(arrayListOf())
   private lateinit var moduleAdapter: ModuleAdapter
-  private lateinit var wifiManager: WifiManager
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -36,10 +30,9 @@ class ModuleActivity : AppCompatActivity() {
     listModule = findViewById(R.id.listModule)
     loadingSpinner = findViewById(R.id.loadingSpinner)
     tvResourcesNotFound = findViewById(R.id.tvResourcesNotFound)
-    wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
-    scanForModules()
     setModuleAdapter()
+    scanForModules()
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -60,29 +53,56 @@ class ModuleActivity : AppCompatActivity() {
   }
 
   private fun scanForModules() {
+    DevicesFinder(this, object : OnDeviceFindListener {
+      override fun onStart() {
+        showLoadingSpinner()
+        clearList()
+      }
+      override fun onDeviceFound(deviceItem: DeviceItem?) {}
+      override fun onComplete(deviceItems: List<DeviceItem?>?) {
+        deviceItems!!.forEachIndexed { index, item ->
+          if (item!!.deviceName.contains("ESP")) {
+            modules.content.add(Module(index, item.deviceName, item.ipAddress))
+            moduleAdapter.refresh(modules)
+          }
+        }
+        if (modules.content.isEmpty()) {
+          showNullEntries()
+        } else {
+          showList()
+        }
+      }
+      override fun onFailed(errorCode: Int) {
+        showErrorDialog(Exception(errorCode.toString()), false)
+      }
+    }).start()
+  }
+
+  private fun clearList() {
+    modules.content = mutableListOf()
+    moduleAdapter.refresh(modules)
+  }
+
+  private fun showNullEntries() {
+    listModule.isVisible = false
+    loadingSpinner.isVisible = false
+    tvResourcesNotFound.isVisible = true
+  }
+
+  private fun showLoadingSpinner() {
     listModule.isVisible = false
     loadingSpinner.isVisible = true
     tvResourcesNotFound.isVisible = false
-    CoroutineScope(Dispatchers.Main).launch {
-      registerReceiver(wifiReciever, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
-      if (!wifiManager.isWifiEnabled) {
-        Toast.makeText(this@ModuleActivity, "Keine Internetverbindung!", Toast.LENGTH_LONG).show()
-        wifiManager.isWifiEnabled = true
-      }
-      wifiManager.startScan()
-    }
   }
 
-  var wifiReciever = object: BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-      unregisterReceiver(this)
-      for (device in wifiManager.scanResults) {
-        println("done 1")
-        val module = Module(null, device.SSID, "123", "123")
-        modules.content = listOf(module)
-        moduleAdapter.refresh(modules)
-      }
-      println("done 2")
-    }
+  private fun showList() {
+    listModule.isVisible = true
+    loadingSpinner.isVisible = false
+    tvResourcesNotFound.isVisible = false
+  }
+
+  private fun showErrorDialog(e: Exception, showTrace: Boolean) {
+    val errorDialog = ErrorDialog(e, showTrace)
+    errorDialog.show(supportFragmentManager, "errorDialog")
   }
 }

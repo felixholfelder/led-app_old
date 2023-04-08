@@ -18,7 +18,7 @@ import led.rest.enums.ColorEnum
 
 class ColorFragment : Fragment() {
   private lateinit var grdColor: GridView
-  private var colors: ListWrapper<Color> = ListWrapper(listOf())
+  private var colors: ListWrapper<Color> = ListWrapper(mutableListOf())
   private lateinit var colorGridViewAdapter: ColorGridViewAdapter
   private val RED = 0
   private val GREEN = 1
@@ -105,7 +105,7 @@ class ColorFragment : Fragment() {
 
   private fun loadColors() {
     val colors = ColorEnum.values()
-    val wrapper: ListWrapper<Color> = ListWrapper(listOf())
+    val wrapper: ListWrapper<Color> = ListWrapper(mutableListOf())
     val list: MutableList<Color> = mutableListOf()
     colors.forEachIndexed { index, color -> list.add(Color(index, color.hex)) }
     wrapper.content = list

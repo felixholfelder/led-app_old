@@ -18,7 +18,7 @@ import led.rest.enums.ColorModeEnum
 
 class ModeFragment : Fragment() {
   private lateinit var grdMode: GridView
-  private var modes: ListWrapper<Mode> = ListWrapper(listOf())
+  private var modes: ListWrapper<Mode> = ListWrapper(mutableListOf())
   private lateinit var modeGridViewAdapter: ModeGridViewAdapter
 
   override fun onCreateView(
@@ -56,7 +56,7 @@ class ModeFragment : Fragment() {
 
   private fun loadColorModes() {
     val modes = ColorModeEnum.values()
-    val wrapper: ListWrapper<Mode> = ListWrapper(listOf())
+    val wrapper: ListWrapper<Mode> = ListWrapper(mutableListOf())
     val list: MutableList<Mode> = mutableListOf()
     modes.forEachIndexed { index, mode -> list.add(Mode(index, mode.modeName)) }
     wrapper.content = list

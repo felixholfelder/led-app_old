@@ -13,7 +13,6 @@ import cloud.holfelder.led.app.model.Module
 class ModuleDialog(private val item: Module?) : AppCompatDialogFragment() {
   private lateinit var itemModuleName: EditText
   private lateinit var itemModuleAddress: EditText
-  private lateinit var itemModuleMac: EditText
 
   override
   fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -23,10 +22,8 @@ class ModuleDialog(private val item: Module?) : AppCompatDialogFragment() {
 
     itemModuleName = view!!.findViewById(R.id.itemModuleName)
     itemModuleAddress = view.findViewById(R.id.itemModuleAddress)
-    itemModuleMac = view.findViewById(R.id.itemModuleMac)
     itemModuleName.setText(item?.name)
     itemModuleAddress.setText(item?.address)
-    itemModuleMac.setText(item?.mac)
 
     builder.setView(view)
       .setTitle(getString(R.string.dialog_module))
