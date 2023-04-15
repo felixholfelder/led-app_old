@@ -6,7 +6,6 @@ import com.neovisionaries.ws.client.WebSocket
 
 class Store : Application() {
   companion object {
-    var currentModuleAddress = ""
     var currentColor = ""
     var currentModeId = -1
     var currentModule: Module? = null

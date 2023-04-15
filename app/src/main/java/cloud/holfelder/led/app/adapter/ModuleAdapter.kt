@@ -43,8 +43,8 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
     StrictMode.setThreadPolicy(policy)
 
     client = OkHttpClient()
-    var view = convertView
     layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    var view = convertView
     if (view == null) {
       view = layoutInflater.inflate(R.layout.module_item, null)
     }
@@ -52,7 +52,7 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
     btnSettings = view.findViewById(R.id.btnSettings)
     btnIsConnected = view.findViewById(R.id.btnIsConnected)
 
-    if (Store.currentModule?.id == getItem(position).id) {
+    if (Store.currentModule?.address == getItem(position).address) {
       btnIsConnected.isVisible = true
     }
 
@@ -68,7 +68,6 @@ class ModuleAdapter(var modules: ListWrapper<Module>, val context: Context,
     textModule.setOnClickListener {
       val isConnected = connect(getItem(position))
       if (isConnected) {
-        Store.currentModuleAddress = getItem(position).address
         val intent = Intent(context, HomeActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         context.startActivity(intent)
