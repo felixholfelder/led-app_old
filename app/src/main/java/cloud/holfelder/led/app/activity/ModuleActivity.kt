@@ -53,33 +53,29 @@ class ModuleActivity : AppCompatActivity() {
   }
 
   private fun scanForModules() {
-    if (modules.content.isEmpty()) {
-      DevicesFinder(this, object : OnDeviceFindListener {
-        override fun onStart() {
-          showLoadingSpinner()
-          clearList()
-        }
+    DevicesFinder(this, object : OnDeviceFindListener {
+      override fun onStart() {
+        showLoadingSpinner()
+        clearList()
+      }
 
-        override fun onDeviceFound(deviceItem: DeviceItem?) {}
-        override fun onComplete(deviceItems: List<DeviceItem?>?) {
-          deviceItems!!.forEachIndexed { index, item ->
-            if (item!!.deviceName.contains("ESP")) {
-              val name = item.deviceName.replace(".local", "").replace("ESP-", "")
-              modules.content.add(Module(index, name, item.ipAddress))
-              moduleAdapter.refresh(modules)
-            }
-          }
-          if (modules.content.isEmpty()) {
-            showNullEntries()
-          } else {
-            showList()
-          }
-        }
+      override fun onDeviceFound(deviceItem: DeviceItem?) {}
+      override fun onComplete(deviceItems: List<DeviceItem?>?) {
+        deviceItems!!.forEachIndexed { _, deviceItem -> addToList(deviceItem) }
+        if (modules.content.isEmpty()) showNullEntries() else showList()
+      }
 
-        override fun onFailed(errorCode: Int) {
-          showErrorDialog(Exception(errorCode.toString()), false)
-        }
-      }).start()
+      override fun onFailed(errorCode: Int) {
+        showErrorDialog(Exception(errorCode.toString()), false)
+      }
+    }).start()
+  }
+
+  private fun addToList(item: DeviceItem?) {
+    if (item!!.deviceName.contains("ESP")) {
+      val name = item.deviceName.replace(".local", "").replace("ESP-", "")
+      modules.content.add(Module(name, item.ipAddress))
+      moduleAdapter.refresh(modules)
     }
   }
 
